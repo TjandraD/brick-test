@@ -37,3 +37,33 @@ Then, run docker that will start the service & the database:
 make build
 make run-docker
 ```
+
+# Code Explanation
+
+I separated the code into 3 main parts:
+- handler, responsible for managing the endpoint, request, and response
+- service, responsible for managing the business logic
+- repo, communicating with the external service and the database
+
+### Validate Account
+
+The service will validate the account number by calling the mockAPI. The mockAPI will return a response with a status code of 201 if the account number is valid.
+
+Since I'm currently using the free version of mockAPI, I have some limitation with the capability of the endpoint that is being mocked. So, I decided to use POST method that will create a new account number, because this have a similarity with how we validate via an endpoint (sending a POST method and waiting for OK/valid response).
+
+### Transfer/Disburse Money
+
+The service will transfer money to the account number by calling the mockAPI. The mockAPI will return a response with a status code of 201 if the transaction is successful.
+
+This happened in 3 steps:
+- Storing the transaction into the DB (with status `PENDING`)
+- Calling external service via mockAPI
+- Updating the transaction status in the DB (if the response is OK)
+
+I utilized mutex to prevent race condition that coming from 2 different clients in here. Since I assumed that this service will only run on single instance, there is no requirement at the moment to use distributed lock.
+
+### Receive Callback
+
+This endpoint is supposedly receive a callback from the external service that process our transfer. The external service will send a POST request to this endpoint with the transaction ID and the status of the transaction.
+
+I also utilize mutex in here with the same reasoning as the previous functionality.
