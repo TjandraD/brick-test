@@ -22,7 +22,7 @@ func main() {
 
 	repo := repo.NewRepository(db)
 	servicesOpts := service.NewServicesOptions{
-		TransactionService: transaction.NewTransactionService(repo),
+		TransactionService: transaction.NewTransactionService(repo, config),
 		AccountService:     account.NewAccountService(repo, config),
 	}
 	services, err := service.NewServices(servicesOpts)
@@ -38,5 +38,6 @@ func main() {
 }
 
 func registerHandlers(e *echo.Echo, services *service.Services) {
-	e.POST("/account/validate", handler.ValidateAccount(services))
+	e.POST("/accounts/validate", handler.ValidateAccount(services))
+	e.POST("/transactions", handler.CreateTransaction(services))
 }

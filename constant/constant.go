@@ -10,3 +10,9 @@ var (
 	ErrInvalidRequest = errors.New("invalid request")
 	ErrBindRequest    = errors.New("error binding request")
 )
+
+var (
+	TransactionPendingStatus   = "PENDING"
+	TransactionProcessedStatus = "PROCESSED"
+	TransactionSuccessStatus   = "SUCCESS"
+)

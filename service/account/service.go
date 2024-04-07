@@ -15,11 +15,11 @@ type AccountServiceInterface interface {
 }
 
 type AccountService struct {
-	Repository *repo.Repository
+	Repository repo.RepositoryInterface
 	Config     app.Config
 }
 
-func NewAccountService(repo *repo.Repository, config app.Config) AccountService {
+func NewAccountService(repo repo.RepositoryInterface, config app.Config) AccountService {
 	return AccountService{
 		Repository: repo,
 		Config:     config,
