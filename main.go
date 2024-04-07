@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"money_transfer/app"
+	"money_transfer/handler"
 	"money_transfer/repo"
 	"money_transfer/service"
+	"money_transfer/service/account"
 	"money_transfer/service/transaction"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,6 +23,7 @@ func main() {
 	repo := repo.NewRepository(db)
 	servicesOpts := service.NewServicesOptions{
 		TransactionService: transaction.NewTransactionService(repo),
+		AccountService:     account.NewAccountService(repo, config),
 	}
 	services, err := service.NewServices(servicesOpts)
 	if err != nil {
@@ -36,7 +38,5 @@ func main() {
 }
 
 func registerHandlers(e *echo.Echo, services *service.Services) {
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	e.POST("/account/validate", handler.ValidateAccount(services))
 }
