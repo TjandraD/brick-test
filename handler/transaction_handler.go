@@ -34,3 +34,22 @@ func CreateTransaction(services *service.Services) echo.HandlerFunc {
 		})
 	}
 }
+
+func ConfirmTransaction(services *service.Services) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		transactionId := c.Param("id")
+		var req ConfirmTransactionRequest
+		if err := c.Bind(&req); err != nil {
+			fmt.Printf("error binding request: %s", err.Error())
+			return errhelper.ReturnError(c, errors.Join(err))
+		}
+
+		err := services.TransactionService.ConfirmTransaction(transactionId, req.IsSuccess)
+		if err != nil {
+			fmt.Printf("error confirming transaction: %s", err.Error())
+			return errhelper.ReturnError(c, err)
+		}
+
+		return c.JSON(http.StatusNoContent, nil)
+	}
+}

@@ -40,4 +40,5 @@ func main() {
 func registerHandlers(e *echo.Echo, services *service.Services) {
 	e.POST("/accounts/validate", handler.ValidateAccount(services))
 	e.POST("/transactions", handler.CreateTransaction(services))
+	e.POST("/transactions/:id/confirm", handler.ConfirmTransaction(services))
 }

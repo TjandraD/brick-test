@@ -17,3 +17,7 @@ type CreateTransactionRequest struct {
 type CreateTransactionResponse struct {
 	IsSuccess bool `json:"is_success"`
 }
+
+type ConfirmTransactionRequest struct {
+	IsSuccess bool `json:"is_success"`
+}

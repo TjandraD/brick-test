@@ -10,7 +10,9 @@ import (
 )
 
 var errorStatusMap = map[error]int{
-	constant.ErrInvalidRequest: http.StatusBadRequest,
+	constant.ErrInvalidRequest:       http.StatusBadRequest,
+	constant.ErrBindRequest:          http.StatusBadRequest,
+	constant.ErrInvalidTransactionId: http.StatusBadRequest,
 }
 
 type ErrorResponse struct {

@@ -8,10 +8,12 @@ import (
 	"money_transfer/constant"
 	"money_transfer/repo"
 	"net/http"
+	"strconv"
 )
 
 type TransactionServiceInterface interface {
 	CreateTransaction(input CreateTransactionInput) (bool, error)
+	ConfirmTransaction(transactionId string, isSuccess bool) error
 }
 
 type TransactionService struct {
@@ -64,4 +66,23 @@ func (s TransactionService) CreateTransaction(input CreateTransactionInput) (boo
 	}
 
 	return isSuccess, nil
+}
+
+func (s TransactionService) ConfirmTransaction(transactionId string, isSuccess bool) error {
+	transactionIdInt, err := strconv.Atoi(transactionId)
+	if err != nil {
+		return errors.Join(constant.ErrInvalidTransactionId)
+	}
+
+	status := constant.TransactionSuccessStatus
+	if !isSuccess {
+		status = constant.TransactionFailedStatus
+	}
+
+	_, err = s.Repository.UpdateTransactionStatus(uint(transactionIdInt), status)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
