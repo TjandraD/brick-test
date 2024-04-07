@@ -51,6 +51,18 @@ The service will validate the account number by calling the mockAPI. The mockAPI
 
 Since I'm currently using the free version of mockAPI, I have some limitation with the capability of the endpoint that is being mocked. So, I decided to use POST method that will create a new account number, because this have a similarity with how we validate via an endpoint (sending a POST method and waiting for OK/valid response).
 
+Example request via cURL:
+```bash
+curl -X POST localhost:8080/account/validate -H "Content-Type: application/json"  -d '{"account_number":50234,"name":"Tjandra"}' -v
+```
+
+Example response:
+```json
+{
+  "is_exists": true
+}
+```
+
 ### Transfer/Disburse Money
 
 The service will transfer money to the account number by calling the mockAPI. The mockAPI will return a response with a status code of 201 if the transaction is successful.
@@ -62,8 +74,32 @@ This happened in 3 steps:
 
 I utilized mutex to prevent race condition that coming from 2 different clients in here. Since I assumed that this service will only run on single instance, there is no requirement at the moment to use distributed lock.
 
+Example request via cURL:
+```bash
+curl -X POST localhost:8080/transactions -H "Content-Type: application/json" -d '{"account_number":500, "amount":5000}' -v
+```
+
+Example response:
+```json
+{
+  "is_success": true
+}
+```
+
 ### Receive Callback
 
 This endpoint is supposedly receive a callback from the external service that process our transfer. The external service will send a POST request to this endpoint with the transaction ID and the status of the transaction.
 
 I also utilize mutex in here with the same reasoning as the previous functionality.
+
+Example request via cURL:
+```bash
+curl -X POST localhost:8080/transactions/2/confirm -H "Content-Type: application/json" -d '{"is_success":true}' -v
+```
+
+Example response:
+```json
+{
+  "is_success": true
+}
+```
